@@ -1,0 +1,139 @@
+@import url("https://cdn.jsdelivr.net/gh/bitmaks/cm-web-fonts@latest/fonts.css");
+
+body {
+  text-align: center;
+  color: white;
+  background-image: linear-gradient(to bottom, black, gray);
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: "Computer Modern Serif", Serif;
+}
+
+#title {
+  color: white;
+  text-align: left;
+  padding: 10px;
+  font-size: 20px;
+}
+
+#MainMenu {
+  align-content: center;
+  align-items: center;
+}
+
+button {
+  color: white;
+  background-color: black;
+  transition-duration: 0.4s;
+  font-family: "Computer Modern Serif", Serif;
+}
+
+.hidden-section {
+  display: none;
+}
+
+#LogInbtn {
+  background-color: transparent;
+  padding: 200px 80px;
+  font-size: 30px;
+  border: 10px;
+  border-color: white;
+}
+
+#LogInbtn:hover {
+  transition-duration: 0.2s;
+  font-size: 40px;
+  color: white;
+}
+
+#CreateAccountbtn {
+  background-color: transparent;
+  padding: 200px 80px;
+  font-size: 30px;
+  border: 10px;
+  border-color: white;
+}
+
+#CreateAccountbtn:hover {
+  transition-duration: 0.2s;
+  font-size: 40px;
+  color: white;
+}
+
+#adminnav {
+  color: white;
+  transition-duration: 0.4s;
+  border: 0px;
+  font-family: "Computer Modern Serif", Serif;
+  float: left;
+  align-content: center;
+}
+
+#adminnav button:hover {
+  background-color: white;
+  color: black;
+}
+
+input {
+  text-align: center;
+  font-family: "Computer Modern Serif", Serif;
+}
+
+input[type=submit] {
+  color: white;
+  background-color: black;
+  transition-duration: 0.4s;
+  border: 0px;
+  padding: 5px 99px;
+}
+
+input[type=submit]:hover {
+  background-color: white;
+  color: black;
+}
+
+input[type=text], input[type=password] {
+  background-color: white;
+  color: black;
+  padding: 8px 45px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
