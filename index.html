@@ -3,6 +3,7 @@
   <head>
     <title>1v1Maths.io</title>
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   </head>
   
   <body>
@@ -13,35 +14,61 @@
       <button id="CreateAccountbtn">Create Account</button>
     </div>
     
-    
     <div id="CreateAccount" class="hidden-section">
       <h2>Create an Account</h2>
-      <form>
+      <form id="signupform">
         <input type="text" placeholder="Email"><br>
         <input type="text" placeholder="Username (3 chars min)"><br>
         <input type="password" placeholder="Password (8 chars min)"><br>
         <input type="submit">
         <p id="authwarning">An authentication email will be sent to your inbox</p>
-        
       </form>
     </div>
     
-    
     <div id="LogIn" class="hidden-section">
-      
+      <h2>Welcome Back</h2>
+      <form id="loginform">
+        <input type="text" placeholder="Email"><br>
+        <input type="password" placeholder="Password"><br>
+        <input type="submit">
+        <p id="warning" style="display:none;"></p>
+      </form>
     </div>
     
-    
     <div id="MainMenu" class="hidden-section">
+      <h2>Welcome Back, <span id="mainmenu-username">[username]</span></h2>
       <p>We have 250+ Maths Problems from Pearson AS Pure Maths</p>
-      <button>Solo Revision</button>
+      <p id="online-counter"><span id="online-count">0</span> x Online</p>
+      <button id="solorevisionbtn">Solo Revision</button>
       <button>Create Lobby</button>
     </div>
     
-    
-    <div id="SoloDisplay" class="hidden-section">
+    <div id="SoloSetup" class="hidden-section">
+      <h2>Choose Topics</h2>
+      <div id="topic-list"></div>
+      <button id="startrevisionbtn">Start Revision</button>
     </div>
-    
+
+    <div id="SoloDisplay" class="hidden-section">
+      <div id="question-display-a"></div>
+      <div id="question-display-b"></div>
+
+      <form id="answerform">
+        <div class="math-input-label" id="label-a">Answer</div>
+        <math-field id="answer-a" virtual-keyboard-mode="onfocus"></math-field>
+
+        <div id="answer-b-container" class="hidden-section">
+          <div class="math-input-label" id="label-b">Part b)</div>
+          <math-field id="answer-b" virtual-keyboard-mode="onfocus"></math-field>
+        </div>
+
+        <br>
+        <input type="submit" value="Submit">
+      </form>
+
+      <p id="result"></p>
+      <button id="nextquestionbtn">Next Question</button>
+    </div>
     
     <div id="adminnav">
       <button id="adminnav1">Landing Page</button>
@@ -56,105 +83,9 @@
       <button id="adminnav10">vs Display</button>
     </div>
     
-    
+    <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="script.js"></script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
