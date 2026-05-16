@@ -30,7 +30,7 @@ button {
   border: 10px;
   border-color: white;
 }
-#LogInbtn:hover { transition-duration: 0.2s; font-size: 40px; color: white; }
+#LogInbtn:hover { transition-duration: 0.2s; font-size: 40px; }
 
 #CreateAccountbtn {
   background-color: transparent;
@@ -39,7 +39,7 @@ button {
   border: 10px;
   border-color: white;
 }
-#CreateAccountbtn:hover { transition-duration: 0.2s; font-size: 40px; color: white; }
+#CreateAccountbtn:hover { transition-duration: 0.2s; font-size: 40px; }
 
 #adminnav {
   position: fixed;
@@ -73,7 +73,6 @@ input[type=text], input[type=password] {
 
 a { color: white; }
 
-/* Online counter */
 #online-counter { font-size: 14px; opacity: 0.7; }
 
 /* ── Topic list ─────────────────────────────────── */
@@ -107,6 +106,21 @@ a { color: white; }
 
 #startrevisionbtn { margin-top: 15px; padding: 10px 60px; font-size: 16px; border: 1px solid white; }
 
+/* ── Stopwatch ──────────────────────────────────── */
+
+#stopwatch {
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  opacity: 0.9;
+  transition: color 0.3s;
+}
+
+#stopwatch.stopped {
+  opacity: 0.5;
+}
+
 /* ── Solo display ───────────────────────────────── */
 
 #question-display-a,
@@ -119,34 +133,39 @@ a { color: white; }
   font-size: 22px;
   border-radius: 4px;
 }
-#question-display-b:empty { display: none; }
 
 #answerform { margin-top: 18px; }
 
-/* Label above each math field */
+#answer-fields-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.answer-field-group {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .math-input-label {
   font-size: 13px;
   opacity: 0.6;
   margin-bottom: 4px;
-  margin-top: 12px;
 }
-
-/* ── MathLive math-field styling ────────────────── */
 
 math-field {
   display: inline-block;
-  min-width: 260px;
+  min-width: 200px;
   font-size: 22px;
   border-radius: 6px;
   padding: 8px 16px;
-
-  /* Light background so rendered maths is readable */
-  --keyboard-zindex: 9999;
   background: white;
   color: black;
+  --keyboard-zindex: 9999;
 }
-
-/* Focus ring */
 math-field:focus-within {
   outline: 2px solid lightblue;
   outline-offset: 1px;
