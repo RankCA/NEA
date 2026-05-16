@@ -4,6 +4,7 @@
     <title>1v1Maths.io</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script type="module">import 'https://unpkg.com/mathlive?module';</script>
   </head>
   
   <body>
@@ -50,18 +51,13 @@
     </div>
 
     <div id="SoloDisplay" class="hidden-section">
+      <div id="stopwatch">0:00</div>
+
       <div id="question-display-a"></div>
       <div id="question-display-b"></div>
 
       <form id="answerform">
-        <div class="math-input-label" id="label-a">Answer</div>
-        <math-field id="answer-a" virtual-keyboard-mode="onfocus"></math-field>
-
-        <div id="answer-b-container" class="hidden-section">
-          <div class="math-input-label" id="label-b">Part b)</div>
-          <math-field id="answer-b" virtual-keyboard-mode="onfocus"></math-field>
-        </div>
-
+        <div id="answer-fields-container"></div>
         <br>
         <input type="submit" value="Submit">
       </form>
@@ -83,7 +79,6 @@
       <button id="adminnav10">vs Display</button>
     </div>
     
-    <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="script.js"></script>
