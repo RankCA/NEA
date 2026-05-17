@@ -246,6 +246,40 @@ function renderLatex(element, latex) {
   catch { element.textContent = latex; }
 }
 
+// ─── Desmos diagram ───────────────────────────────────────────────────────────
+
+let desmosCalculator = null;
+
+function getDesmos() {
+  if (!desmosCalculator) {
+    const el = document.getElementById('diagram-calculator');
+    desmosCalculator = Desmos.GraphingCalculator(el, {
+      expressions:   false,
+      settingsMenu:  false,
+      zoomButtons:   true,
+      lockViewport:  false,
+      border:        false,
+      backgroundColor: '#1a1a1a',
+      textColor:     '#ffffff',
+      axisColor:     '#555555',
+      gridColor:     '#333333',
+    });
+  }
+  return desmosCalculator;
+}
+
+function loadDiagram(expressions) {
+  const container = document.getElementById('diagram-container');
+  if (!expressions || expressions.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'block';
+  const calc = getDesmos();
+  calc.setBlank();
+  expressions.forEach(expr => calc.setExpression(expr));
+}
+
 function loadQuestion(question) {
   const displayA  = document.getElementById('question-display-a');
   const displayB  = document.getElementById('question-display-b');
@@ -270,6 +304,8 @@ function loadQuestion(question) {
     displayB.innerHTML = '';
     displayB.style.display = 'none';
   }
+
+  loadDiagram(question.diagram || null);
 
   const answerFields = question.answer_fields || [{ label: 'Answer', value: question.answer_a }];
   container.innerHTML = '';
