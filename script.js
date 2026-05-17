@@ -210,9 +210,16 @@ renderTopics();
 function normalise(latex) {
   return (latex || '')
     .replace(/\s+/g, '')
-    .replace(/\{(\w)\}/g, '$1')
-    .replace(/\\left\(/g, '(').replace(/\\right\)/g, ')')
-    .replace(/\\left\[/g, '[').replace(/\\right\]/g, ']')
+    .replace(/\u2212/g, '-')               // unicode minus → ASCII minus
+    .replace(/\\mleft/g, '\\left')         // MathLive-specific wrappers
+    .replace(/\\mright/g, '\\right')
+    .replace(/\\left\s*\(/g, '(').replace(/\\right\s*\)/g, ')')
+    .replace(/\\left\s*\[/g, '[').replace(/\\right\s*\]/g, ']')
+    .replace(/\\left\s*\{/g, '{').replace(/\\right\s*\}/g, '}')
+    .replace(/\{(\w)\}/g, '$1')            // {x} → x  (single char)
+    .replace(/\{(\d+)\}/g, '$1')           // {26} → 26 (multi-digit numbers)
+    .replace(/\\cdot/g, '*')
+    .replace(/\\times/g, '*')
     .toLowerCase();
 }
 
@@ -245,7 +252,9 @@ function loadQuestion(question) {
   const container = document.getElementById('answer-fields-container');
   const result    = document.getElementById('result');
 
-  result.textContent = '';
+  result.innerHTML = '';
+  document.querySelectorAll('.correct-answer-display, .correct-answer-label').forEach(el => el.remove());
+  document.querySelector('#answerform input[type="submit"]').disabled = false;
   window.mathVirtualKeyboard?.hide();
 
   // Reset and start stopwatch
@@ -290,18 +299,43 @@ function loadQuestion(question) {
     const secs = elapsed % 60;
     const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
 
-    const allCorrect = answerFields.every((field, i) => {
-      const mf = document.getElementById(`answer-field-${i}`);
-      return normalise(mf?.value || '') === normalise(field.value);
-    });
+    const userVals    = answerFields.map((_, i) => normalise(document.getElementById(`answer-field-${i}`)?.value || ''));
+    const correctVals = answerFields.map(f => normalise(f.value));
+
+    // Try exact order first, then any permutation (handles swapped x_1/x_2 etc.)
+    const exactMatch = userVals.every((v, i) => v === correctVals[i]);
+    const anyOrder   = [...userVals].sort().every((v, i) => v === [...correctVals].sort()[i]);
+    const allCorrect = exactMatch || anyOrder;
 
     if (allCorrect) {
-      result.textContent = `✓ Correct!  (${timeStr})`;
+      result.innerHTML = '';
       result.style.color = 'lightgreen';
+      result.textContent = `✓ Correct!  (${timeStr})`;
     } else {
-      const answers = answerFields.map(f => `${f.label}: ${f.value}`).join('  |  ');
-      result.textContent = `✗ Incorrect. Answers: ${answers}  (${timeStr})`;
+      result.innerHTML = '';
       result.style.color = 'salmon';
+      result.textContent = `✗ Incorrect  (${timeStr})`;
+
+      // Render correct answer as a box underneath each input field
+      answerFields.forEach((f, i) => {
+        const group = document.getElementById(`answer-field-${i}`)?.parentElement;
+        if (!group) return;
+
+        const lbl = document.createElement('div');
+        lbl.className = 'correct-answer-label';
+        lbl.textContent = 'Correct answer';
+
+        const box = document.createElement('div');
+        box.className = 'correct-answer-display';
+        try { katex.render(f.value, box, { throwOnError: false, displayMode: false }); }
+        catch { box.textContent = f.value; }
+
+        group.appendChild(lbl);
+        group.appendChild(box);
+      });
+
+      // Lock submit so they can't retry
+      document.querySelector('#answerform input[type="submit"]').disabled = true;
     }
   };
 }
