@@ -1,7 +1,7 @@
 const { createClient } = supabase;
 const client = createClient('https://cfmyiiglxqwhenxpskcu.supabase.co', 'sb_publishable_AntdyCGLvy2sjFXEpzhP3w_g4nQm4Jc');
 
-// Declarations
+// Aduanas
 const landingpage       = document.getElementById("LandingPage");
 const loginpage         = document.getElementById("LogIn");
 const createaccountpage = document.getElementById("CreateAccount");
