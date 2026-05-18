@@ -1,7 +1,11 @@
 const { createClient } = supabase;
 const client = createClient('https://cfmyiiglxqwhenxpskcu.supabase.co', 'sb_publishable_AntdyCGLvy2sjFXEpzhP3w_g4nQm4Jc');
 
-// Aduanas
+// ─── Current session ─────────────────────────────────────────────────────────
+let currentUser     = null;
+let currentQuestion = null;
+
+// Declarations
 const landingpage       = document.getElementById("LandingPage");
 const loginpage         = document.getElementById("LogIn");
 const createaccountpage = document.getElementById("CreateAccount");
@@ -24,9 +28,47 @@ function setadminnav(pageIndex) {
   if (pages[pageIndex]) pages[pageIndex].classList.remove("hidden-section");
 }
 
+// ─── Persistent session ───────────────────────────────────────────────────────
+function enterApp(user) {
+  currentUser = user;
+  document.getElementById('mainmenu-username').textContent = user.user_metadata.username;
+  document.getElementById('settingsbtn').style.display = 'inline-block';
+  startPresence();
+  loadStats();
+  setadminnav(3);
+}
+
+client.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    enterApp(session.user);
+  }
+});
+
+// ─── Settings modal ───────────────────────────────────────────────────────────
+document.getElementById('settingsbtn').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.remove('hidden-section');
+});
+document.getElementById('settings-closebtn').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.add('hidden-section');
+});
+document.getElementById('logoutbtn').addEventListener('click', async () => {
+  await client.auth.signOut();
+  currentUser = null;
+  document.getElementById('settings-modal').classList.add('hidden-section');
+  document.getElementById('settingsbtn').style.display = 'none';
+  stopStopwatch();
+  setadminnav(2); // → Log In page
+});
+
+// ─── Navigation buttons ───────────────────────────────────────────────────────
 document.getElementById("CreateAccountbtn").addEventListener("click", () => setadminnav(1));
 document.getElementById("LogInbtn").addEventListener("click", () => setadminnav(2));
 document.getElementById("solorevisionbtn").addEventListener("click", () => setadminnav(4));
+document.getElementById("solosetup-backbtn").addEventListener("click", () => setadminnav(3));
+document.getElementById("solodisplay-quitbtn").addEventListener("click", () => {
+  stopStopwatch();
+  setadminnav(3); // → Main Menu
+});
 
 
 // ─── MathLive virtual keyboard ───────────────────────────────────────────────
@@ -110,9 +152,7 @@ document.getElementById("loginform").addEventListener('submit', async function(e
     warn.textContent = error.message;
     warn.style.display = 'block';
   } else {
-    document.getElementById('mainmenu-username').textContent = data.user.user_metadata.username;
-    startPresence();
-    setadminnav(3);
+    // onAuthStateChange will call enterApp — nothing needed here
   }
 });
 
@@ -224,20 +264,76 @@ function normalise(latex) {
 }
 
 
+// ─── Stats ───────────────────────────────────────────────────────────────────
+
+async function loadStats() {
+  if (!currentUser) return;
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data: all }  = await client.from('user_answers').select('correct').eq('user_id', currentUser.id);
+  const { data: week } = await client.from('user_answers').select('id').eq('user_id', currentUser.id).gte('answered_at', weekAgo);
+
+  const correct   = all?.filter(r => r.correct).length  ?? 0;
+  const incorrect = all?.filter(r => !r.correct).length ?? 0;
+  const weekCount = week?.length ?? 0;
+
+  document.getElementById('stat-week').textContent   = `${weekCount} question${weekCount !== 1 ? 's' : ''} answered this week`;
+  document.getElementById('stat-record').textContent = `${correct} correct  ·  ${incorrect} incorrect`;
+}
+
+async function recordAnswer(questionId, correct) {
+  if (!currentUser) return;
+  await client.from('user_answers').insert({ user_id: currentUser.id, question_id: questionId, correct });
+}
+
+async function submitToLeaderboard(questionId, timeSeconds) {
+  if (!currentUser) return;
+  const { data: existing } = await client.from('leaderboard').select('id, time_seconds').eq('question_id', questionId).eq('user_id', currentUser.id).maybeSingle();
+  if (!existing) {
+    await client.from('leaderboard').insert({ question_id: questionId, user_id: currentUser.id, username: currentUser.user_metadata.username, time_seconds: timeSeconds });
+  } else if (timeSeconds < existing.time_seconds) {
+    await client.from('leaderboard').update({ time_seconds: timeSeconds, achieved_at: new Date().toISOString() }).eq('id', existing.id);
+  }
+}
+
+async function fetchAndShowLeaderboard(questionId) {
+  const { data } = await client.from('leaderboard').select('username, time_seconds').eq('question_id', questionId).order('time_seconds', { ascending: true }).limit(5);
+  if (!data || !data.length) return;
+
+  const medals = ['🥇','🥈','🥉','4.','5.'];
+  const tbody  = document.getElementById('leaderboard-tbody');
+  tbody.innerHTML = '';
+  data.forEach((row, i) => {
+    const mins = Math.floor(row.time_seconds / 60);
+    const secs = row.time_seconds % 60;
+    const timeStr = `${mins}:${String(secs).padStart(2,'0')}`;
+    const isYou = currentUser && row.username === currentUser.user_metadata.username;
+    const tr = document.createElement('tr');
+    if (isYou) tr.className = 'lb-you';
+    tr.innerHTML = `<td>${medals[i]}</td><td>${row.username}${isYou ? ' (you)' : ''}</td><td>${timeStr}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('leaderboard-panel').classList.remove('hidden-section');
+}
+
 // ─── Solo Revision ────────────────────────────────────────────────────────────
 
+function getSelectedSubtopics() {
+  return [...document.querySelectorAll('.subtopic-check:checked')].map(el => el.dataset.subtopic);
+}
+
 document.getElementById('startrevisionbtn').addEventListener('click', async () => {
-  const selectedTopics = [...document.querySelectorAll('.topic-check:checked')].map(el => el.dataset.topic);
-  if (!selectedTopics.length) { alert('Please select at least one topic.'); return; }
-  const { data, error } = await client.from('questions').select('*').in('topic', selectedTopics);
-  if (error || !data.length) { alert('No questions found for selected topics.'); return; }
+  const selected = getSelectedSubtopics();
+  if (!selected.length) { alert('Please select at least one topic or subtopic.'); return; }
+  const { data, error } = await client.from('questions').select('*').in('subtopic', selected);
+  if (error || !data.length) { alert('No questions found for selection.'); return; }
   loadQuestion(data[Math.floor(Math.random() * data.length)]);
   setadminnav(5);
 });
 
 document.getElementById('nextquestionbtn').addEventListener('click', async () => {
-  const selectedTopics = [...document.querySelectorAll('.topic-check:checked')].map(el => el.dataset.topic);
-  const { data, error } = await client.from('questions').select('*').in('topic', selectedTopics);
+  const selected = getSelectedSubtopics();
+  const { data, error } = await client.from('questions').select('*').in('subtopic', selected);
   if (!error && data.length) loadQuestion(data[Math.floor(Math.random() * data.length)]);
 });
 
@@ -281,6 +377,7 @@ function loadDiagram(expressions) {
 }
 
 function loadQuestion(question) {
+  currentQuestion = question;
   const displayA  = document.getElementById('question-display-a');
   const displayB  = document.getElementById('question-display-b');
   const container = document.getElementById('answer-fields-container');
@@ -288,6 +385,7 @@ function loadQuestion(question) {
 
   result.innerHTML = '';
   document.querySelectorAll('.correct-answer-display, .correct-answer-label').forEach(el => el.remove());
+  document.getElementById('leaderboard-panel').classList.add('hidden-section');
   document.querySelector('#answerform input[type="submit"]').disabled = false;
   window.mathVirtualKeyboard?.hide();
 
@@ -319,12 +417,15 @@ function loadQuestion(question) {
     const mf = document.createElement('math-field');
     mf.id = `answer-field-${i}`;
     attachVirtualKeyboard(mf);
+    mf.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('answerform').requestSubmit(); }
+    });
     group.appendChild(label);
     group.appendChild(mf);
     container.appendChild(group);
   });
 
-  document.getElementById('answerform').onsubmit = (e) => {
+  document.getElementById('answerform').onsubmit = async (e) => {
     e.preventDefault();
     stopStopwatch();
 
@@ -343,10 +444,14 @@ function loadQuestion(question) {
     const anyOrder   = [...userVals].sort().every((v, i) => v === [...correctVals].sort()[i]);
     const allCorrect = exactMatch || anyOrder;
 
+    const qid = currentQuestion?.id;
+    await recordAnswer(qid, allCorrect);
+
     if (allCorrect) {
       result.innerHTML = '';
       result.style.color = 'lightgreen';
       result.textContent = `✓ Correct!  (${timeStr})`;
+      await submitToLeaderboard(qid, elapsed);
     } else {
       result.innerHTML = '';
       result.style.color = 'salmon';
@@ -373,5 +478,7 @@ function loadQuestion(question) {
       // Lock submit so they can't retry
       document.querySelector('#answerform input[type="submit"]').disabled = true;
     }
+
+    await fetchAndShowLeaderboard(qid);
   };
 }
