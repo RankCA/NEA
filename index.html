@@ -8,7 +8,19 @@
   </head>
   
   <body>
-    <h1 id="title">1v1Maths.io</h1>
+    <div id="topbar">
+      <h1 id="title">1v1Maths.io</h1>
+      <button id="settingsbtn" style="display:none" title="Settings">⚙</button>
+    </div>
+
+    <!-- Settings modal -->
+    <div id="settings-modal" class="hidden-section">
+      <div id="settings-box">
+        <h3>Settings</h3>
+        <button id="logoutbtn">Log Out</button>
+        <button id="settings-closebtn">Close</button>
+      </div>
+    </div>
     
     <div id="LandingPage">
       <button id="LogInbtn">Log In</button>
@@ -38,19 +50,30 @@
     
     <div id="MainMenu" class="hidden-section">
       <h2>Welcome Back, <span id="mainmenu-username">[username]</span></h2>
-      <p>We have 370+ Maths Problems from Pearson AS Pure Maths</p>
+      <p>We have 250+ Maths Problems from Pearson AS Pure Maths</p>
       <p id="online-counter"><span id="online-count">0</span> x Online</p>
+      <div id="user-stats">
+        <p id="stat-week">—</p>
+        <p id="stat-record">—</p>
+      </div>
       <button id="solorevisionbtn">Solo Revision</button>
       <button>Create Lobby</button>
     </div>
     
     <div id="SoloSetup" class="hidden-section">
+      <div class="page-nav">
+        <button class="back-btn" id="solosetup-backbtn">← Main Menu</button>
+      </div>
       <h2>Choose Topics</h2>
       <div id="topic-list"></div>
       <button id="startrevisionbtn">Start Revision</button>
     </div>
 
     <div id="SoloDisplay" class="hidden-section">
+      <div class="page-nav">
+        <button class="back-btn" id="solodisplay-quitbtn">✕ Quit Session</button>
+      </div>
+
       <div id="stopwatch">0:00</div>
 
       <div id="question-display-a"></div>
@@ -67,6 +90,14 @@
       </form>
 
       <div id="result"></div>
+
+      <div id="leaderboard-panel" class="hidden-section">
+        <h3 id="leaderboard-title">Top 5 — This Question</h3>
+        <table id="leaderboard-table">
+          <tbody id="leaderboard-tbody"></tbody>
+        </table>
+      </div>
+
       <button id="nextquestionbtn">Next Question</button>
     </div>
     
