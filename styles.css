@@ -8,10 +8,72 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   font-family: "Computer Modern Serif", Serif;
-  padding-bottom: 50px;
+  padding-bottom: 100px;
 }
 
-#title { color: white; text-align: left; padding: 10px; font-size: 20px; }
+#topbar {
+  position: relative;
+  padding: 10px 16px 0;
+  text-align: left;
+}
+#title { color: white; font-size: 20px; margin: 0; display: inline-block; }
+
+#settingsbtn {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  color: white;
+  padding: 4px 10px;
+  opacity: 0.85;
+  transition: opacity 0.2s, background 0.2s;
+}
+#settingsbtn:hover { opacity: 1; background: rgba(255,255,255,0.2); }
+
+/* ── Settings modal ─────────────────────────────── */
+#settings-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#settings-modal.hidden-section { display: none; }
+#settings-box {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 30px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+}
+#settings-box h3 { margin: 0 0 6px; font-size: 18px; }
+#logoutbtn { padding: 8px 24px; border: 1px solid salmon; color: salmon; }
+#logoutbtn:hover { background: salmon; color: black; }
+#settings-closebtn { padding: 8px 24px; border: 1px solid rgba(255,255,255,0.3); }
+
+/* ── Page navigation ────────────────────────────── */
+.page-nav { text-align: left; margin-bottom: 6px; }
+.back-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: "Computer Modern Serif", Serif;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: white; background: transparent; }
 #MainMenu { align-content: center; align-items: center; }
 
 button {
@@ -104,7 +166,7 @@ a { color: white; }
 .subtopic-list.collapsed { display: none; }
 .subtopic-row { display: flex; align-items: center; font-size: 14px; padding: 1px 0; opacity: 0.85; }
 
-#startrevisionbtn { margin-top: 15px; padding: 10px 60px; font-size: 16px; border: 1px solid white; }
+#startrevisionbtn { display: block; margin: 20px auto 0; padding: 10px 60px; font-size: 16px; border: 1px solid white; }
 
 /* ── Stopwatch ──────────────────────────────────── */
 
@@ -207,3 +269,40 @@ math-field:focus-within {
   color: white;
 }
 #nextquestionbtn { margin-top: 10px; padding: 8px 40px; border: 1px solid white; }
+
+/* ── Stats ──────────────────────────────────────── */
+
+#user-stats {
+  margin: 10px auto 18px;
+  font-size: 14px;
+  opacity: 0.7;
+  line-height: 1.7;
+}
+#user-stats p { margin: 0; }
+
+/* ── Leaderboard ────────────────────────────────── */
+
+#leaderboard-panel {
+  margin: 18px auto 4px;
+  width: min(340px, 90vw);
+}
+#leaderboard-title {
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin: 0 0 8px;
+  font-weight: normal;
+}
+#leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+#leaderboard-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+#leaderboard-table td:first-child { width: 32px; text-align: center; }
+#leaderboard-table td:last-child  { text-align: right; opacity: 0.75; font-variant-numeric: tabular-nums; }
+.lb-you { color: lightgreen; font-weight: bold; }
