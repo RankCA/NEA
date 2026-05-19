@@ -359,6 +359,7 @@ function getDesmos() {
       textColor:     '#000000',
       axisColor:     '#555555',
       gridColor:     '#808080',
+      pointsOfInterest: false,
     });
   }
   return desmosCalculator;
