@@ -355,10 +355,10 @@ function getDesmos() {
       zoomButtons:   true,
       lockViewport:  false,
       border:        false,
-      backgroundColor: '#1a1a1a',
-      textColor:     '#ffffff',
+      backgroundColor: '#FFFFFF',
+      textColor:     '#000000',
       axisColor:     '#555555',
-      gridColor:     '#333333',
+      gridColor:     '#808080',
     });
   }
   return desmosCalculator;
